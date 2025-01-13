@@ -2101,6 +2101,23 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2138,9 +2155,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ClientsList',
   props: ['clients'],
+  data: function data() {
+    return {
+      userClients: _toConsumableArray(this.clients),
+      successMessage: ''
+    };
+  },
   methods: {
+    confirmAndDeleteClient: function confirmAndDeleteClient(client) {
+      // Show confirmation prompt
+      if (confirm("Are you sure you want to delete ".concat(client.name, "?"))) {
+        this.deleteClient(client);
+      }
+    },
     deleteClient: function deleteClient(client) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id));
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(client.id)).then(function (response) {
+        if (response.data === 'Deleted') {
+          _this.userClients = _this.userClients.filter(function (c) {
+            return c.id !== client.id;
+          });
+          _this.successMessage = client.name;
+          setTimeout(function () {
+            _this.successMessage = '';
+          }, 3000);
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
@@ -58562,12 +58605,21 @@ var render = function() {
   return _c("div", [
     _vm._m(0),
     _vm._v(" "),
+    _vm.successMessage
+      ? _c("div", { staticClass: "alert alert-success text-center" }, [
+          _c("span", { staticClass: "font-semibold" }, [
+            _vm._v(_vm._s(_vm.successMessage))
+          ]),
+          _vm._v(" was successfully removed\n    ")
+        ])
+      : _vm._e(),
+    _vm._v(" "),
     _c("table", { staticClass: "table" }, [
       _vm._m(1),
       _vm._v(" "),
       _c(
         "tbody",
-        _vm._l(_vm.clients, function(client) {
+        _vm._l(_vm.userClients, function(client) {
           return _c("tr", { key: client.id }, [
             _c("td", [_vm._v(_vm._s(client.name))]),
             _vm._v(" "),
@@ -58593,7 +58645,7 @@ var render = function() {
                   staticClass: "btn btn-danger btn-sm",
                   on: {
                     click: function($event) {
-                      return _vm.deleteClient(client)
+                      return _vm.confirmAndDeleteClient(client)
                     }
                   }
                 },
