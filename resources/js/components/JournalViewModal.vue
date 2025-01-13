@@ -7,14 +7,8 @@
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
             <h3 class="text-lg font-semibold mb-4">Journal Details</h3>
             <div class="mb-4">
-                <p>
-                    <span class="font-semibold">Date:</span>
-                    <span>{{ journal.date }}</span>
-                </p>
-                <p>
-                    <span class="font-semibold">Text:</span>
-                    <span>{{ journal.body }}</span>
-                </p>
+                <p class="font-semibold">{{ formatDate(journal.date) }}</p>
+                <p>{{ journal.body }}</p>
             </div>
             <div class="flex justify-end space-x-2">
                 <button
@@ -30,6 +24,8 @@
 </template>
 
 <script>
+import {formatDate} from "../utils/formatDate";
+
 export default {
     name: 'JournalViewModal',
     props: {
@@ -37,6 +33,9 @@ export default {
             type: Object,
             required: true,
         },
+    },
+    methods: {
+        formatDate
     },
 };
 </script>

@@ -33,21 +33,21 @@ class ClientController extends Controller
 
     public function store(ClientRequest $request)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        $validated['user_id'] = auth()->id();
+        $data['user_id'] = auth()->id();
 
-        $client = Client::create($validated);
-
-        return $client;
+        return Client::create($data);
     }
 
     public function destroy(Client $client)
     {
         $this->authorize('delete', $client);
 
-        $client->delete();
+        if ($client->delete()) {
+            return response()->json(['message' => 'Client deleted successfully'], 200);
+        }
 
-        return 'Deleted';
+        return response()->json(['error' => 'Failed to delete client'], 500);
     }
 }

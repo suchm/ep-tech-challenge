@@ -8,7 +8,7 @@
             <h3 class="text-lg font-semibold mb-4">{{ title }}</h3>
             <form @submit.prevent="handleSubmit">
                 <div class="form-group mb-4">
-                    <label for="journalText" class="block text-sm font-medium text-gray-700">Journal Text</label>
+                    <label for="journalText" class="block text-sm font-medium text-gray-700">Journal Content</label>
                     <textarea
                         id="journalText"
                         class="form-control block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"

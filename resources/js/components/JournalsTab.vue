@@ -46,7 +46,7 @@
         <JournalFormModal
             v-if="showCreateJournalModal"
             @close="showCreateJournalModal = false"
-            @save="createJournal"
+            @save="handleCreateJournal"
         />
         <JournalViewModal
             v-if="showViewJournalModal"
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import { formatDate } from '../utils/formatDate';
 import JournalFormModal from './JournalFormModal.vue';
 import JournalViewModal from './JournalViewModal.vue';
@@ -67,32 +68,31 @@ export default {
     props: ['clientId'],
     data() {
         return {
-            journals: [],
             selectedJournal: null,
             showCreateJournalModal: false,
             showViewJournalModal: false,
         };
     },
-    mounted() {
-        this.fetchJournals();
+    computed: {
+        ...mapGetters(['getJournals']),
+        journals() {
+            return this.getJournals(this.clientId);
+        },
+    },
+    created() {
+        if (!this.journals.length) {
+            this.fetchJournals(this.clientId);
+        }
     },
     methods: {
         formatDate,
-        fetchJournals() {
-            axios.get(`/clients/${this.clientId}/journals`).then((res) => {
-                this.journals = res.data;
-            });
+        ...mapActions(['fetchJournals', 'createJournal', 'deleteJournal']),
+        async handleCreateJournal(journal) {
+            await this.createJournal({ clientId: this.clientId, journal });
+            this.showCreateJournalModal = false;
         },
-        createJournal(journal) {
-            axios.post(`/clients/${this.clientId}/journals`, journal).then((res) => {
-                this.journals.unshift(res.data);
-                this.showCreateJournalModal = false;
-            });
-        },
-        deleteJournal(id) {
-            axios.delete(`/clients/${this.clientId}/journals/${id}`).then(() => {
-                this.journals = this.journals.filter((j) => j.id !== id);
-            });
+        async deleteJournal(journalId) {
+            await this.deleteJournal({ clientId: this.clientId, journalId });
         },
         viewJournal(journal) {
             this.selectedJournal = journal;

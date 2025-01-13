@@ -60,18 +60,14 @@ export default {
         },
 
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`)
-                .then(response => {
-                    if ( response.data === 'Deleted' ) {
+            axios.delete(`/clients/${client.id}`).then((res) => {
+                    this.userClients = this.userClients.filter(c => c.id !== client.id);
 
-                        this.userClients = this.userClients.filter(c => c.id !== client.id);
+                    this.successMessage = client.name;
 
-                        this.successMessage = client.name;
-
-                        setTimeout(() => {
-                            this.successMessage = '';
-                        }, 3000);
-                    }
+                    setTimeout(() => {
+                        this.successMessage = '';
+                    }, 3000);
                 })
                 .catch(error=> {
                     console.log(error);

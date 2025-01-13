@@ -30,11 +30,6 @@ class Client extends Model
         return $this->hasMany(Journal::class)->latest('date');
     }
 
-    public function getBookingsCountAttribute()
-    {
-        return $this->bookings->count();
-    }
-
     public function getUrlAttribute()
     {
         return "/clients/" . $this->id;

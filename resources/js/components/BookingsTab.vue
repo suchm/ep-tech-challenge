@@ -3,8 +3,7 @@
         <div class="flex justify-between items-center mb-3">
             <h3 class="mb-3">List of client bookings</h3>
             <select
-                v-model="localFilter"
-                @change="$emit('filter-change', localFilter)"
+                v-model="bookingsSelect"
                 class="form-select focus:outline-none border-2 p-2 rounded-sm"
             >
                 <option value="all">All bookings</option>
@@ -29,7 +28,7 @@
                     <td>
                         <button
                             class="btn btn-danger btn-sm"
-                            @click="$emit('delete', booking.id)"
+                            @click="deleteBooking(booking)"
                         >
                             Delete
                         </button>
@@ -50,18 +49,18 @@ import { formatDateRange } from '../utils/formatDate';
 
 export default {
     name: 'BookingsTab',
-    props: ['bookings', 'filter'],
+    props: ['bookings'],
     data() {
         return {
-            localFilter: this.filter || 'all',
+            bookingsSelect: 'all',
         };
     },
     computed: {
         filteredBookings() {
             const now = new Date();
-            if (this.localFilter === 'future') {
+            if (this.bookingsSelect === 'future') {
                 return this.bookings.filter((b) => new Date(b.start) > now);
-            } else if (this.localFilter === 'past') {
+            } else if (this.bookingsSelect === 'past') {
                 return this.bookings.filter((b) => new Date(b.start) < now);
             }
             return this.bookings;
@@ -69,6 +68,10 @@ export default {
     },
     methods: {
         formatDateRange,
+
+        deleteBooking(booking) {
+            axios.delete(`/bookings/${booking.id}`);
+        },
     },
 };
 </script>

@@ -25,17 +25,15 @@
                 </div>
 
                 <div v-if="currentTab === 'bookings'" class="bg-white rounded p-2">
-                    <BookingsTab
-                        :bookings="client.bookings"
-                        :filter="selectedFilter"
-                        @delete="deleteBooking"
-                        @filter-change="selectedFilter = $event"
-                    />
+                    <BookingsTab :bookings="client.bookings" />
                 </div>
 
-                <div v-if="currentTab === 'journals'" class="bg-white rounded p-2">
-                    <JournalsTab :client-id="client.id" />
-                </div>
+                <keep-alive>
+                    <div v-if="currentTab === 'journals'" class="bg-white rounded p-2">
+                        <JournalsTab :client-id="client.id" />
+                    </div>
+                </keep-alive>
+
             </div>
         </div>
     </div>
@@ -55,11 +53,6 @@ export default {
             currentTab: 'bookings',
             selectedFilter: 'all',
         };
-    },
-    methods: {
-        deleteBooking(bookingId) {
-            console.log('Deleting booking:', bookingId);
-        },
     },
 };
 </script>
