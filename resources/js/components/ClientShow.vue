@@ -40,7 +40,7 @@
                     <h3 class="mb-3">List of client bookings</h3>
 
                     <template v-if="client.bookings && client.bookings.length > 0">
-                        <table>
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Time</th>
@@ -50,7 +50,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ booking.start }} - {{ booking.end }}</td>
+                                    <td>{{ formatDateRange(booking.start, booking.end) }}</td>
                                     <td>{{ booking.notes }}</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
@@ -79,6 +79,7 @@
 
 <script>
 import axios from 'axios';
+import {formatDateRange} from "../utils/formatDate";
 
 export default {
     name: 'ClientShow',
@@ -92,6 +93,8 @@ export default {
     },
 
     methods: {
+        formatDateRange,
+
         switchTab(newTab) {
             this.currentTab = newTab;
         },
