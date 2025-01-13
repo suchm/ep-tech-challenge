@@ -21,15 +21,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['middleware' => 'auth', 'prefix' => 'clients'], function () {
-    Route::get('/', 'ClientsController@index')->name('clients.index');
-    Route::get('/create', 'ClientsController@create');
-    Route::post('/', 'ClientsController@store');
-    Route::get('/{client}', 'ClientsController@show');
-    Route::delete('/{client}', 'ClientsController@destroy');
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('clients', 'ClientController')
+        ->except(['edit', 'update']);
 
-    Route::get('/{client}/journals', 'JournalController@index');
-    Route::post('/{client}/journals', 'JournalController@store');
-    Route::get('/{client}/journals/{journal}', 'JournalController@show');
-    Route::delete('/{client}/journals/{journal}', 'JournalController@destroy');
+    Route::resource('clients.journals', 'JournalController')
+        ->only(['index', 'store', 'show', 'destroy']);
 });
