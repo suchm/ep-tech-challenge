@@ -53,7 +53,7 @@ export default {
 
     methods: {
         confirmAndDeleteClient(client) {
-            // Show confirmation prompt
+
             if (confirm(`Are you sure you want to delete ${client.name}?`)) {
                 this.deleteClient(client);
             }
