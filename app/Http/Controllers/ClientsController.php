@@ -23,6 +23,8 @@ class ClientsController extends Controller
 
     public function show(Client $client)
     {
+        $this->authorize('view', $client);
+
         $client->load('bookings');
 
         return view('clients.show', ['client' => $client]);
@@ -42,9 +44,11 @@ class ClientsController extends Controller
         return $client;
     }
 
-    public function destroy($client)
+    public function destroy(Client $client)
     {
-        Client::where('id', $client)->delete();
+        $this->authorize('delete', $client);
+
+        $client->delete();
 
         return 'Deleted';
     }
