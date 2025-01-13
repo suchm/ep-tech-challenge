@@ -25,6 +25,11 @@ class Client extends Model
         return $this->hasMany(Booking::class)->latest('start');
     }
 
+    public function journals()
+    {
+        return $this->hasMany(Journal::class)->latest('date');
+    }
+
     public function getBookingsCountAttribute()
     {
         return $this->bookings->count();

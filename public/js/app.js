@@ -2086,6 +2086,111 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2095,13 +2200,25 @@ __webpack_require__.r(__webpack_exports__);
     return {
       currentTab: 'bookings',
       selectedFilter: 'all',
-      filteredBookings: this.client.bookings
+      filteredBookings: this.client.bookings,
+      journals: [],
+      selectedJournal: null,
+      showViewJournalModal: false,
+      showCreateJournalModal: false,
+      newJournal: {
+        body: ''
+      }
     };
   },
   methods: {
+    formatDate: _utils_formatDate__WEBPACK_IMPORTED_MODULE_1__["formatDate"],
     formatDateRange: _utils_formatDate__WEBPACK_IMPORTED_MODULE_1__["formatDateRange"],
     switchTab: function switchTab(newTab) {
       this.currentTab = newTab;
+
+      if (this.currentTab === 'journals') {
+        this.fetchJournals();
+      }
     },
     deleteBooking: function deleteBooking(booking) {
       axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/bookings/".concat(booking.id));
@@ -2120,6 +2237,44 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         this.filteredBookings = this.client.bookings;
       }
+    },
+    fetchJournals: function fetchJournals() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/clients/".concat(this.client.id, "/journals")).then(function (response) {
+        _this.journals = response.data;
+      })["catch"](function (error) {
+        console.error('Error fetching journals:', error);
+      });
+    },
+    createJournal: function createJournal(journalData) {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/clients/".concat(this.client.id, "/journals"), journalData).then(function (response) {
+        _this2.journals.unshift(response.data);
+
+        _this2.showCreateJournalModal = false;
+        _this2.newJournal.body = '';
+      })["catch"](function (error) {
+        console.error('Error creating journal:', error);
+      });
+    },
+    deleteJournal: function deleteJournal(journal) {
+      var _this3 = this;
+
+      if (confirm("Are you sure you want to delete this journal?")) {
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/clients/".concat(this.client.id, "/journals/").concat(journal.id)).then(function () {
+          _this3.journals = _this3.journals.filter(function (j) {
+            return j.id !== journal.id;
+          });
+        })["catch"](function (error) {
+          console.error('Error deleting journal:', error);
+        });
+      }
+    },
+    viewJournal: function viewJournal(journal) {
+      this.selectedJournal = journal;
+      this.showViewJournalModal = true;
     }
   }
 });
@@ -58614,7 +58769,7 @@ var render = function() {
                         _c(
                           "tbody",
                           _vm._l(_vm.filteredBookings, function(booking) {
-                            return _c("tr", { key: booking.id }, [
+                            return _c("tr", { key: "booking-" + booking.id }, [
                               _c("td", [
                                 _vm._v(
                                   _vm._s(
@@ -58659,13 +58814,282 @@ var render = function() {
           : _vm._e(),
         _vm._v(" "),
         _vm.currentTab === "journals"
-          ? _c("div", { staticClass: "bg-white rounded p-4" }, [
-              _c("h3", { staticClass: "mb-3" }, [
-                _vm._v("List of client journals")
-              ]),
-              _vm._v(" "),
-              _c("p", [_vm._v("(BONUS) TODO: implement this feature")])
-            ])
+          ? _c(
+              "div",
+              { staticClass: "bg-white rounded p-4" },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex justify-between items-center mb-3" },
+                  [
+                    _c("h3", [_vm._v("List of client journals")]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        on: {
+                          click: function($event) {
+                            _vm.showCreateJournalModal = true
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        + Add Journal\n                    "
+                        )
+                      ]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.journals.length > 0
+                  ? [
+                      _c("table", { staticClass: "table" }, [
+                        _vm._m(1),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.journals, function(journal) {
+                            return _c("tr", { key: "journal-" + journal.id }, [
+                              _c("td", { staticClass: "font-semibold" }, [
+                                _vm._v(_vm._s(_vm.formatDate(journal.date)))
+                              ]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(journal.body))]),
+                              _vm._v(" "),
+                              _c("td", [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-primary btn-sm mb-2",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.viewJournal(journal)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                    View\n                                "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-danger btn-sm",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.deleteJournal(journal)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                    Delete\n                                "
+                                    )
+                                  ]
+                                )
+                              ])
+                            ])
+                          }),
+                          0
+                        )
+                      ])
+                    ]
+                  : [
+                      _c("p", { staticClass: "text-center" }, [
+                        _vm._v("No journals available.")
+                      ])
+                    ],
+                _vm._v(" "),
+                _vm.showCreateJournalModal
+                  ? _c(
+                      "div",
+                      {
+                        staticClass:
+                          "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50",
+                        attrs: { tabindex: "-1", role: "dialog" }
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "bg-white rounded-lg shadow-lg p-6 w-full max-w-md"
+                          },
+                          [
+                            _c(
+                              "h3",
+                              { staticClass: "text-lg font-semibold mb-4" },
+                              [_vm._v("Add Journal")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "form",
+                              {
+                                on: {
+                                  submit: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.createJournal(_vm.newJournal)
+                                  }
+                                }
+                              },
+                              [
+                                _c("div", { staticClass: "form-group mb-4" }, [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "block text-sm font-medium text-gray-700",
+                                      attrs: { for: "journalText" }
+                                    },
+                                    [_vm._v("Journal Text")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("textarea", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.newJournal.body,
+                                        expression: "newJournal.body"
+                                      }
+                                    ],
+                                    staticClass:
+                                      "form-control block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2",
+                                    attrs: { id: "journalText", required: "" },
+                                    domProps: { value: _vm.newJournal.body },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.newJournal,
+                                          "body",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  })
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "flex justify-end space-x-2" },
+                                  [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-secondary px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            _vm.showCreateJournalModal = false
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                    Cancel\n                                "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-primary px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700",
+                                        attrs: { type: "submit" }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                    Save\n                                "
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.showViewJournalModal
+                  ? _c(
+                      "div",
+                      {
+                        staticClass:
+                          "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "bg-white rounded-lg shadow-lg p-6 w-full max-w-lg"
+                          },
+                          [
+                            _c(
+                              "h3",
+                              { staticClass: "text-lg font-semibold mb-4" },
+                              [_vm._v("Journal Details")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "mb-4" }, [
+                              _c("p", { staticClass: "font-semibold" }, [
+                                _vm._v(
+                                  _vm._s(
+                                    _vm.formatDate(_vm.selectedJournal.date)
+                                  )
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("p", [
+                                _vm._v(_vm._s(_vm.selectedJournal.body))
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              { staticClass: "flex justify-end space-x-2" },
+                              [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-secondary px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        _vm.showViewJournalModal = false
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                Close\n                            "
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  : _vm._e()
+              ],
+              2
+            )
           : _vm._e()
       ])
     ])
@@ -58681,6 +59105,20 @@ var staticRenderFns = [
         _c("th", [_vm._v("Time")]),
         _vm._v(" "),
         _c("th", [_vm._v("Notes")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Journal Details")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -71431,14 +71869,21 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************!*\
   !*** ./resources/js/utils/formatDate.js ***!
   \******************************************/
-/*! exports provided: formatDateRange */
+/*! exports provided: formatDate, formatDateRange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDate", function() { return formatDate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateRange", function() { return formatDateRange; });
 /* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/index.js");
 
+
+function formatDate(date) {
+  var formatString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'EEEE d MMMM yyyy';
+  var dateString = new Date(date);
+  return Object(date_fns__WEBPACK_IMPORTED_MODULE_0__["format"])(dateString, formatString);
+}
 
 function formatDateRange(start, end) {
   var startDate = new Date(start);
