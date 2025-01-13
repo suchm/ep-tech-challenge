@@ -9,11 +9,9 @@ class ClientsController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
-
-        foreach ($clients as $client) {
-            $client->append('bookings_count');
-        }
+        $clients = Client::withCount('bookings')
+            ->where('user_id', auth()->id())
+            ->get();
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -23,9 +21,9 @@ class ClientsController extends Controller
         return view('clients.create');
     }
 
-    public function show($client)
+    public function show(Client $client)
     {
-        $client = Client::where('id', $client)->first();
+        $client->load('bookings');
 
         return view('clients.show', ['client' => $client]);
     }
