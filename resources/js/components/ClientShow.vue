@@ -31,31 +31,38 @@
 
             <div class="w-2/3">
                 <div>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
-                    <button class="btn" :class="{'btn-primary': currentTab == 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
+                    <button class="btn" :class="{'btn-primary': currentTab === 'bookings', 'btn-default': currentTab != 'bookings'}" @click="switchTab('bookings')">Bookings</button>
+                    <button class="btn" :class="{'btn-primary': currentTab === 'journals', 'btn-default': currentTab != 'journals'}" @click="switchTab('journals')">Journals</button>
                 </div>
 
                 <!-- Bookings -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'bookings'">
-                    <h3 class="mb-3">List of client bookings</h3>
+                <div class="bg-white rounded p-4" v-if="currentTab === 'bookings'">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="mb-3">List of client bookings</h3>
+                        <select v-model="selectedFilter" @change="filterBookings" class="form-select focus:outline-none border-2 p-2 rounded-sm">
+                            <option value="all">All bookings</option>
+                            <option value="future">Future bookings only</option>
+                            <option value="past">Past bookings only</option>
+                        </select>
+                    </div>
 
-                    <template v-if="client.bookings && client.bookings.length > 0">
+                    <template v-if="filteredBookings && filteredBookings.length > 0">
                         <table class="table">
                             <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
-                                </tr>
+                            <tr>
+                                <th>Time</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="booking in client.bookings" :key="booking.id">
-                                    <td>{{ formatDateRange(booking.start, booking.end) }}</td>
-                                    <td>{{ booking.notes }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
-                                    </td>
-                                </tr>
+                            <tr v-for="booking in filteredBookings" :key="booking.id">
+                                <td>{{ formatDateRange(booking.start, booking.end) }}</td>
+                                <td>{{ booking.notes }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @click="deleteBooking(booking)">Delete</button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </template>
@@ -67,7 +74,7 @@
                 </div>
 
                 <!-- Journals -->
-                <div class="bg-white rounded p-4" v-if="currentTab == 'journals'">
+                <div class="bg-white rounded p-4" v-if="currentTab === 'journals'">
                     <h3 class="mb-3">List of client journals</h3>
 
                     <p>(BONUS) TODO: implement this feature</p>
@@ -89,6 +96,8 @@ export default {
     data() {
         return {
             currentTab: 'bookings',
+            selectedFilter: 'all',
+            filteredBookings: this.client.bookings,
         }
     },
 
@@ -101,7 +110,21 @@ export default {
 
         deleteBooking(booking) {
             axios.delete(`/bookings/${booking.id}`);
-        }
+        },
+
+        filterBookings() {
+            const now = new Date();
+
+            if (this.selectedFilter === 'future') {
+                this.filteredBookings = this.client.bookings.filter(booking => new Date(booking.start) > now);
+
+            } else if (this.selectedFilter === 'past') {
+                this.filteredBookings = this.client.bookings.filter(booking => new Date(booking.start) < now);
+
+            } else {
+                this.filteredBookings = this.client.bookings;
+            }
+        },
     }
 }
 </script>
