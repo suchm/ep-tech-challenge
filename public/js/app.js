@@ -74602,7 +74602,7 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_2__
     setJournals: function setJournals(state, _ref) {
       var clientId = _ref.clientId,
           journals = _ref.journals;
-      vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.journals, clientId, journals); // Reactive assignment
+      vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.journals, clientId, journals);
     },
     addJournal: function addJournal(state, _ref2) {
       var clientId = _ref2.clientId,

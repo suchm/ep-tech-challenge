@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Client;
 use App\Http\Requests\ClientRequest;
-use Illuminate\Http\Request;
+use App\Client;
+use App\Repositories\ClientRepository;
 
 class ClientController extends Controller
 {
+    protected $clientRepository;
+
+    public function __construct(ClientRepository $clientRepository)
+    {
+        $this->clientRepository = $clientRepository;
+    }
+
     public function index()
     {
-        $clients = Client::withCount('bookings')
-            ->where('user_id', auth()->id())
-            ->get();
+        $clients = $this->clientRepository->getAllClientsWithBookingCount(auth()->id());
 
         return view('clients.index', ['clients' => $clients]);
     }
@@ -26,7 +31,7 @@ class ClientController extends Controller
     {
         $this->authorize('view', $client);
 
-        $client->load('bookings');
+        $client = $this->clientRepository->findClientWithBookings($client->id);
 
         return view('clients.show', ['client' => $client]);
     }
@@ -34,17 +39,18 @@ class ClientController extends Controller
     public function store(ClientRequest $request)
     {
         $data = $request->validated();
-
         $data['user_id'] = auth()->id();
 
-        return Client::create($data);
+        $client = $this->clientRepository->createClient($data);
+
+        return $client;
     }
 
     public function destroy(Client $client)
     {
         $this->authorize('delete', $client);
 
-        if ($client->delete()) {
+        if ($this->clientRepository->deleteClient($client)) {
             return response()->json(['message' => 'Client deleted successfully'], 200);
         }
 

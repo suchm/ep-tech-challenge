@@ -60,7 +60,8 @@ export default {
         },
 
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`).then((res) => {
+            axios.delete(`/clients/${client.id}`)
+                .then((res) => {
                     this.userClients = this.userClients.filter(c => c.id !== client.id);
 
                     this.successMessage = client.name;

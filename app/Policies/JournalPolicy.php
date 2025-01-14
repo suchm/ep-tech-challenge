@@ -39,6 +39,18 @@ class JournalPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Client  $client
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function create(User $user, Client $client): bool
+    {
+        return $user->id === $client->user_id;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Client  $client
      * @param  \App\Journal  $journal
      * @return \Illuminate\Auth\Access\Response|bool
      */

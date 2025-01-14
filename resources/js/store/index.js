@@ -15,7 +15,7 @@ export default new Vuex.Store({
     },
     mutations: {
         setJournals(state, { clientId, journals }) {
-            Vue.set(state.journals, clientId, journals); // Reactive assignment
+            Vue.set(state.journals, clientId, journals);
         },
         addJournal(state, { clientId, journal }) {
             if (!state.journals[clientId]) {

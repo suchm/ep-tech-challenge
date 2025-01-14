@@ -3,31 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Client;
-use App\Http\Requests\JournalRequest;
 use App\Journal;
-use Illuminate\Http\Request;
+use App\Http\Requests\JournalRequest;
+use App\Repositories\JournalRepository;
 
 class JournalController extends Controller
 {
+    protected $journalRepository;
+
+    public function __construct(JournalRepository $journalRepository)
+    {
+        $this->journalRepository = $journalRepository;
+    }
 
     public function index(Client $client)
     {
         $this->authorize('view', $client);
 
-        $journals = $client->journals()->latest()->get();
+        $journals = $this->journalRepository->getAllJournalsForClient($client);
 
         return response()->json($journals);
     }
 
     public function store(JournalRequest $request, Client $client)
     {
-        $request->validate(['body' => 'required|string',]);
+        $this->authorize('create', [Journal::class, $client]);
 
-        $journal = Journal::create([
-            'client_id' => $client->id,
-            'date' => now()->toDateString(),
-            'body' => $request->input('body'),
-        ]);
+        $data = $request->validated();
+
+        $journal = $this->journalRepository->createJournal($client, $data);
 
         return response()->json($journal, 201);
     }
@@ -43,8 +47,11 @@ class JournalController extends Controller
     {
         $this->authorize('delete', [$client, $journal]);
 
-        $journal->delete();
+        if ($this->journalRepository->deleteJournal($journal)) {
+            return response()->json(['message' => 'Journal deleted successfully'], 200);
+        }
 
-        return response()->json(['message' => 'Journal deleted successfully.']);
+        return response()->json(['error' => 'Failed to delete journal'], 500);
     }
 }
+
