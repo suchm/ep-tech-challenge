@@ -2187,8 +2187,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
@@ -2588,7 +2586,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: _objectSpread(_objectSpread({
-    formatDate: _utils_formatDate__WEBPACK_IMPORTED_MODULE_2__["formatDate"]
+    formatDate: _utils_formatDate__WEBPACK_IMPORTED_MODULE_2__["formatDate"],
+    confirmAndDeleteJournal: function confirmAndDeleteJournal(Journal) {
+      if (confirm("Are you sure you want to delete the journal?")) {
+        this.deleteJournalById(Journal);
+      }
+    }
   }, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(['fetchJournals', 'createJournal', 'deleteJournal'])), {}, {
     handleCreateJournal: function handleCreateJournal(journal) {
       var _this = this;
@@ -2615,7 +2618,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }, _callee);
       }))();
     },
-    deleteJournal: function deleteJournal(journalId) {
+    deleteJournalById: function deleteJournalById(journalId) {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
@@ -59813,76 +59816,65 @@ var render = function() {
       [
         _c("ClientInfo", { attrs: { client: _vm.client } }),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "w-2/3" },
-          [
-            _c("div", [
-              _c(
-                "button",
-                {
-                  staticClass: "btn",
-                  class: {
-                    "btn-primary": _vm.currentTab === "bookings",
-                    "btn-default": _vm.currentTab !== "bookings"
-                  },
-                  on: {
-                    click: function($event) {
-                      _vm.currentTab = "bookings"
-                    }
-                  }
+        _c("div", { staticClass: "w-2/3" }, [
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn",
+                class: {
+                  "btn-primary": _vm.currentTab === "bookings",
+                  "btn-default": _vm.currentTab !== "bookings"
                 },
-                [_vm._v("\n                    Bookings\n                ")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn",
-                  class: {
-                    "btn-primary": _vm.currentTab === "journals",
-                    "btn-default": _vm.currentTab !== "journals"
-                  },
-                  on: {
-                    click: function($event) {
-                      _vm.currentTab = "journals"
-                    }
+                on: {
+                  click: function($event) {
+                    _vm.currentTab = "bookings"
                   }
+                }
+              },
+              [_vm._v("\n                    Bookings\n                ")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn",
+                class: {
+                  "btn-primary": _vm.currentTab === "journals",
+                  "btn-default": _vm.currentTab !== "journals"
                 },
-                [_vm._v("\n                    Journals\n                ")]
+                on: {
+                  click: function($event) {
+                    _vm.currentTab = "journals"
+                  }
+                }
+              },
+              [_vm._v("\n                    Journals\n                ")]
+            )
+          ]),
+          _vm._v(" "),
+          _vm.currentTab === "bookings"
+            ? _c(
+                "div",
+                { staticClass: "bg-white rounded p-2" },
+                [
+                  _c("BookingsTab", {
+                    attrs: { bookings: _vm.client.bookings }
+                  })
+                ],
+                1
               )
-            ]),
-            _vm._v(" "),
-            _vm.currentTab === "bookings"
-              ? _c(
-                  "div",
-                  { staticClass: "bg-white rounded p-2" },
-                  [
-                    _c("BookingsTab", {
-                      attrs: { bookings: _vm.client.bookings }
-                    })
-                  ],
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _c("keep-alive", [
-              _vm.currentTab === "journals"
-                ? _c(
-                    "div",
-                    { staticClass: "bg-white rounded p-2" },
-                    [
-                      _c("JournalsTab", {
-                        attrs: { "client-id": _vm.client.id }
-                      })
-                    ],
-                    1
-                  )
-                : _vm._e()
-            ])
-          ],
-          1
-        )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.currentTab === "journals"
+            ? _c(
+                "div",
+                { staticClass: "bg-white rounded p-2" },
+                [_c("JournalsTab", { attrs: { "client-id": _vm.client.id } })],
+                1
+              )
+            : _vm._e()
+        ])
       ],
       1
     )
@@ -60311,7 +60303,7 @@ var render = function() {
                           staticClass: "btn btn-danger btn-sm",
                           on: {
                             click: function($event) {
-                              return _vm.deleteJournal(journal.id)
+                              return _vm.confirmAndDeleteJournal(journal.id)
                             }
                           }
                         },
@@ -74597,7 +74589,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_2__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
   state: {
-    journals: []
+    journals: {}
   },
   getters: {
     getJournals: function getJournals(state) {
@@ -74615,12 +74607,17 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_2__
     addJournal: function addJournal(state, _ref2) {
       var clientId = _ref2.clientId,
           journal = _ref2.journal;
+
+      if (!state.journals[clientId]) {
+        vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.journals, clientId, []);
+      }
+
       state.journals[clientId].unshift(journal);
     },
     removeJournal: function removeJournal(state, _ref3) {
       var clientId = _ref3.clientId,
           journalId = _ref3.journalId;
-      var journals = state.journals[clientId];
+      var journals = state.journals[clientId] || [];
       state.journals[clientId] = journals.filter(function (j) {
         return j.id !== journalId;
       });

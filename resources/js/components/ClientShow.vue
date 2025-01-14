@@ -28,11 +28,9 @@
                     <BookingsTab :bookings="client.bookings" />
                 </div>
 
-                <keep-alive>
-                    <div v-if="currentTab === 'journals'" class="bg-white rounded p-2">
-                        <JournalsTab :client-id="client.id" />
-                    </div>
-                </keep-alive>
+                <div v-if="currentTab === 'journals'" class="bg-white rounded p-2">
+                    <JournalsTab :client-id="client.id" />
+                </div>
 
             </div>
         </div>

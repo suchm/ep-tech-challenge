@@ -6,21 +6,26 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        journals: [],
+        journals: {},
     },
     getters: {
-        getJournals: (state) => (clientId) => state.journals[clientId] || [],
+        getJournals: (state) => (clientId) => {
+            return state.journals[clientId] || [];
+        },
     },
     mutations: {
         setJournals(state, { clientId, journals }) {
             Vue.set(state.journals, clientId, journals); // Reactive assignment
         },
         addJournal(state, { clientId, journal }) {
+            if (!state.journals[clientId]) {
+                Vue.set(state.journals, clientId, []);
+            }
             state.journals[clientId].unshift(journal);
         },
        removeJournal(state, { clientId, journalId }) {
-            const journals = state.journals[clientId];
-            state.journals[clientId] = journals.filter((j) => j.id !== journalId);
+           const journals = state.journals[clientId] || [];
+           state.journals[clientId] = journals.filter((j) => j.id !== journalId);
         },
     },
     actions: {

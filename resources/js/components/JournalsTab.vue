@@ -29,7 +29,7 @@
                         </button>
                         <button
                             class="btn btn-danger btn-sm"
-                            @click="deleteJournal(journal.id)"
+                            @click="confirmAndDeleteJournal(journal.id)"
                         >
                             Delete
                         </button>
@@ -86,14 +86,25 @@ export default {
     },
     methods: {
         formatDate,
+
+        confirmAndDeleteJournal(Journal) {
+
+            if (confirm(`Are you sure you want to delete the journal?`)) {
+                this.deleteJournalById(Journal);
+            }
+        },
+
         ...mapActions(['fetchJournals', 'createJournal', 'deleteJournal']),
+
         async handleCreateJournal(journal) {
             await this.createJournal({ clientId: this.clientId, journal });
             this.showCreateJournalModal = false;
         },
-        async deleteJournal(journalId) {
+
+        async deleteJournalById(journalId) {
             await this.deleteJournal({ clientId: this.clientId, journalId });
         },
+
         viewJournal(journal) {
             this.selectedJournal = journal;
             this.showViewJournalModal = true;
