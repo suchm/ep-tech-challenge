@@ -5,6 +5,11 @@
             <a href="/clients/create" class="float-right btn btn-primary">+ New Client</a>
         </h1>
 
+        <div v-if="successMessage"
+             class="alert alert-success text-center">
+            <span class="font-semibold">{{ successMessage }}</span> was successfully removed
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
@@ -16,14 +21,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="client in clients" :key="client.id">
+                <tr v-for="client in userClients" :key="client.id">
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
                     <td>{{ client.phone }}</td>
                     <td>{{ client.bookings_count }}</td>
                     <td>
                         <a class="btn btn-primary btn-sm" :href="`/clients/${client.id}`">View</a>
-                        <button class="btn btn-danger btn-sm" @click="deleteClient(client)">Delete</button>
+                        <button class="btn btn-danger btn-sm" @click="confirmAndDeleteClient(client)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -39,9 +44,35 @@ export default {
 
     props: ['clients'],
 
+    data() {
+        return {
+            userClients: [...this.clients],
+            successMessage: '',
+        }
+    },
+
     methods: {
+        confirmAndDeleteClient(client) {
+
+            if (confirm(`Are you sure you want to delete ${client.name}?`)) {
+                this.deleteClient(client);
+            }
+        },
+
         deleteClient(client) {
-            axios.delete(`/clients/${client.id}`);
+            axios.delete(`/clients/${client.id}`)
+                .then((res) => {
+                    this.userClients = this.userClients.filter(c => c.id !== client.id);
+
+                    this.successMessage = client.name;
+
+                    setTimeout(() => {
+                        this.successMessage = '';
+                    }, 3000);
+                })
+                .catch(error=> {
+                    console.log(error);
+                });
         }
     }
 }

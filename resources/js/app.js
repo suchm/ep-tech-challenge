@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 
+import store from "./store";
+
 window.Vue = require('vue');
 
 /**
@@ -31,5 +33,6 @@ Vue.component('client-show', require('./components/ClientShow.vue').default);
  */
 
 const app = new Vue({
+    store,
     el: '#app',
 });

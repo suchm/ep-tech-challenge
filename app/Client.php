@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'phone',
-        'adress',
+        'address',
         'city',
         'postcode',
     ];
@@ -21,12 +22,12 @@ class Client extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class)->latest('start');
     }
 
-    public function getBookingsCountAttribute()
+    public function journals()
     {
-        return $this->bookings->count();
+        return $this->hasMany(Journal::class)->latest('date');
     }
 
     public function getUrlAttribute()
